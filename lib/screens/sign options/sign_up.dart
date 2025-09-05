@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_list/helper/asset_helper.dart';
-import 'package:to_do_list/screens/sign%20options/change_password_screen.dart';
-import 'package:to_do_list/screens/sign%20options/sign_up.dart';
+import 'package:to_do_list/screens/sign%20options/sign_in.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
 import 'package:to_do_list/widgets/custom_button_widget.dart';
 import 'package:to_do_list/widgets/tapped_text.dart';
 import 'package:to_do_list/widgets/text_form_field_widget.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final TextEditingController textController = TextEditingController();
-  final TextEditingController passController = TextEditingController();
 
-  @override
-  void dispose() {
-    textController.dispose();
-    passController.dispose();
-    super.dispose();
-  }
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController passController = TextEditingController();
+  final TextEditingController confirmPassController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +34,18 @@ class _SignInState extends State<SignIn> {
             children: [
               SizedBox(height: 15),
               Image.asset(AssetHelper.mainImage),
-              SizedBox(height: 90),
               TextFormFieldWidget(
-                controller: textController,
+                controller: emailController,
                 hint: "Email",
-                validation: (String? value) {
+                validation: (value) {
+                  return null;
+                },
+              ),
+              SizedBox(height: 18),
+              TextFormFieldWidget(
+                controller: fullNameController,
+                hint: "Full Name",
+                validation: (value) {
                   return null;
                 },
               ),
@@ -52,29 +54,18 @@ class _SignInState extends State<SignIn> {
                 controller: passController,
                 hint: "Password",
                 isPassword: true,
-                validation: (String? value) {
+                validation: (value) {
                   return null;
                 },
               ),
               SizedBox(height: 18),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangePasswordScreen(),
-                    ),
-                  );
+              TextFormFieldWidget(
+                controller: passController,
+                hint: "Confirm Password",
+                isPassword: true,
+                validation: (value) {
+                  return null;
                 },
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    "Forgot Password?",
-                    style: AppTextStyles.regular14.copyWith(
-                      color: AppColors.grey,
-                    ),
-                  ),
-                ),
               ),
               SizedBox(height: 18),
               CustomButtonWidget(
@@ -84,21 +75,21 @@ class _SignInState extends State<SignIn> {
                 color: AppColors.orange,
                 child: Center(
                   child: Text(
-                    "Sign In",
+                    "Sign Up",
                     style: AppTextStyles.medium18.copyWith(
                       color: AppColors.white,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 15),
               TappedText(
-                firstString: "Dont have an account?",
-                secondString: "Sign UP",
+                firstString: "Have an account?",
+                secondString: "Log in",
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => SignUp()),
+                    MaterialPageRoute(builder: (context) => SignIn()),
                   );
                 },
               ),

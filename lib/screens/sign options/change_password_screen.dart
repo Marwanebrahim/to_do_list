@@ -36,9 +36,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
           child: ListView(
             children: [
-              SizedBox(height: 25,),
+              
               Image.asset(AssetHelper.mainImage),
-              SizedBox(height: 60,),
+              SizedBox(height: 90,),
 
               TextFormFieldWidget(
                 controller: passController,
