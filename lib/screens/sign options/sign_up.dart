@@ -1,6 +1,12 @@
+
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:to_do_list/helper/asset_helper.dart';
+import 'package:to_do_list/models/user.dart';
+import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/screens/sign%20options/sign_in.dart';
+import 'package:to_do_list/service/user_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
 import 'package:to_do_list/widgets/custom_button_widget.dart';
@@ -16,7 +22,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-
+  UserService userService = UserService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController passController = TextEditingController();
@@ -38,6 +44,14 @@ class _SignUpState extends State<SignUp> {
                 controller: emailController,
                 hint: "Email",
                 validation: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Email is required";
+                  }
+
+                  if (! value.endsWith("@gmail.com")) {
+                    return "This Email isn't valid";
+                  }
+
                   return null;
                 },
               ),
@@ -46,6 +60,9 @@ class _SignUpState extends State<SignUp> {
                 controller: fullNameController,
                 hint: "Full Name",
                 validation: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Name is required";
+                  }
                   return null;
                 },
               ),
@@ -55,21 +72,58 @@ class _SignUpState extends State<SignUp> {
                 hint: "Password",
                 isPassword: true,
                 validation: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Password is required";
+                  }
+                  if (value.length < 8) {
+                    return "Password should contain 8 characters";
+                  }
                   return null;
                 },
               ),
               SizedBox(height: 18),
               TextFormFieldWidget(
-                controller: passController,
+                controller: confirmPassController,
                 hint: "Confirm Password",
                 isPassword: true,
                 validation: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "you should Confirm password";
+                  }
+                  if (value != passController.text) {
+                    return "Password not match";
+                  }
                   return null;
                 },
               ),
               SizedBox(height: 18),
               CustomButtonWidget(
-                onTap: () {},
+                onTap: () async {
+                  if (! _formKey.currentState!.validate()) {
+                    return;
+                  }
+
+                  User? user = await userService.addUser(
+                    name: fullNameController.text,
+                    email: emailController.text,
+                    password: passController.text,
+                  );
+                  if (user == null) {
+                    _showSnackBar(context);
+                  }
+                  bool isDone = await userService.setCurrentUser(
+                    emailController.text,
+                  );
+
+                  if (isDone) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  } else {
+                    _showSnackBar(context);
+                  }
+                },
                 hieght: 45,
                 width: 330,
                 color: AppColors.orange,
@@ -96,6 +150,14 @@ class _SignUpState extends State<SignUp> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("please try again", style: AppTextStyles.medium20),
       ),
     );
   }

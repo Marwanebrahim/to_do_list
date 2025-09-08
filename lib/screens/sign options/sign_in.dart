@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:to_do_list/helper/asset_helper.dart';
+import 'package:to_do_list/models/user.dart';
+import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/screens/sign%20options/change_password_screen.dart';
 import 'package:to_do_list/screens/sign%20options/sign_up.dart';
+import 'package:to_do_list/service/user_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
 import 'package:to_do_list/widgets/custom_button_widget.dart';
@@ -17,6 +22,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  UserService userService = UserService();
   final TextEditingController textController = TextEditingController();
   final TextEditingController passController = TextEditingController();
 
@@ -44,6 +50,14 @@ class _SignInState extends State<SignIn> {
                 controller: textController,
                 hint: "Email",
                 validation: (String? value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Email is required";
+                  }
+
+                  if (!value.endsWith("@gmail.com")) {
+                    return "This Email isn't valid";
+                  }
+
                   return null;
                 },
               ),
@@ -53,18 +67,42 @@ class _SignInState extends State<SignIn> {
                 hint: "Password",
                 isPassword: true,
                 validation: (String? value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Password is required";
+                  }
+                  if (value.length < 8) {
+                    return "Password should contain 8 characters";
+                  }
                   return null;
                 },
               ),
               SizedBox(height: 18),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangePasswordScreen(),
-                    ),
-                  );
+                onTap: () async {
+                  if (textController.text.trim().isEmpty ||
+                      !textController.text.endsWith("@gmail.com")) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Email is required")),
+                    );
+                    return;
+                  } else {
+                    User? user = await userService.isUSerFound(
+                      email: textController.text,
+                    );
+                    if (user != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChangePasswordScreen(currentUser: user),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please try again")),
+                      );
+                    }
+                  }
                 },
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -78,7 +116,30 @@ class _SignInState extends State<SignIn> {
               ),
               SizedBox(height: 18),
               CustomButtonWidget(
-                onTap: () {},
+                onTap: () async {
+                  if (!_formKey.currentState!.validate()) {
+                    return;
+                  }
+                  bool isFound = await userService.getUser(
+                    email: textController.text,
+                    password: passController.text,
+                  );
+                 
+                  if (isFound) {
+                    bool isDone = await userService.setCurrentUser(
+                      textController.text,
+                    );
+                  
+                    if (isDone) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    }
+                  } else {
+                    _showSnackBar(context);
+                  }
+                },
                 hieght: 45,
                 width: 330,
                 color: AppColors.orange,
@@ -104,6 +165,17 @@ class _SignInState extends State<SignIn> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "Please check email or password",
+          style: AppTextStyles.medium20,
         ),
       ),
     );

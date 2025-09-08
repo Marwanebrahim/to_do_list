@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list/screens/sign%20options/sign_in.dart';
+import 'package:to_do_list/screens/splash_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(const MyApp());
 }
 
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
     
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-     home: SignIn(),
+     home:SplashScreen(),
     );
   }
 }
