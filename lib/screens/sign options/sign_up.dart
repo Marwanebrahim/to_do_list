@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
@@ -27,6 +26,14 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController passController = TextEditingController();
   final TextEditingController confirmPassController = TextEditingController();
+  @override
+  void dispose() {
+    emailController.dispose();
+    fullNameController.dispose();
+    passController.dispose();
+    confirmPassController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +55,7 @@ class _SignUpState extends State<SignUp> {
                     return "Email is required";
                   }
 
-                  if (! value.endsWith("@gmail.com")) {
+                  if (!value.endsWith("@gmail.com")) {
                     return "This Email isn't valid";
                   }
 
@@ -99,7 +106,7 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 18),
               CustomButtonWidget(
                 onTap: () async {
-                  if (! _formKey.currentState!.validate()) {
+                  if (!_formKey.currentState!.validate()) {
                     return;
                   }
 
