@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:to_do_list/helper/asset_helper.dart';
+import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/screens/sign%20options/sign_in.dart';
+import 'package:to_do_list/service/user_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,14 +21,18 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _asyncMethod() async {
-    await Future.delayed(Duration(seconds: 2));
+    UserService userService = UserService();
+    await Future.delayed(Duration(seconds: 3));
     await Hive.initFlutter();
     await Hive.openBox("users");
     await Hive.openBox("currentUser");
+    var isUSerFound = await userService.getCurrentUser();
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SignIn()),
+        MaterialPageRoute(
+          builder: (context) => isUSerFound == null ? SignIn() : HomeScreen(),
+        ),
       );
     }
   }
