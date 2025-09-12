@@ -76,6 +76,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
+      floatingActionButton: CircleAvatar(
+        radius: 30,
+        backgroundColor: AppColors.lightRed,
+        child: IconButton(onPressed: () {
+          
+        }, icon: Icon(Icons.add,color: AppColors.white,size: 35,)),
+      ),
     );
   }
 

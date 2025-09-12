@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:to_do_list/models/task.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
+import 'package:to_do_list/widgets/delete_bottom_sheet.dart';
 
 class DisplayTask extends StatelessWidget {
   const DisplayTask({super.key, required this.task});
@@ -12,7 +13,7 @@ class DisplayTask extends StatelessWidget {
   Widget build(BuildContext context) {
     String formattedDate = DateFormat("d MMM yyyy").format(task.createdAt);
     return Scaffold(
-      appBar: _gatAppBar(),
+      appBar: _gatAppBar(context),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -47,7 +48,7 @@ class DisplayTask extends StatelessWidget {
     );
   }
 
-  AppBar _gatAppBar() {
+  AppBar _gatAppBar(BuildContext context) {
     return AppBar(
       actions: [
         task.deadLine == null
@@ -63,7 +64,15 @@ class DisplayTask extends StatelessWidget {
           visualDensity: VisualDensity(horizontal: -4),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            showModalBottomSheet(
+              isDismissible: false,
+              enableDrag: false,
+              backgroundColor: AppColors.transparent,
+              context: context,
+              builder: (context) => DeleteBottomSheet(),
+            );
+          },
           icon: Icon(Icons.delete_outline),
           visualDensity: VisualDensity(horizontal: -4),
         ),
