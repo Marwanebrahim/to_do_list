@@ -83,8 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
         radius: 30,
         backgroundColor: AppColors.lightRed,
         child: IconButton(
-          onPressed: () {
-            showModalBottomSheet(
+          onPressed: () async {
+            final result = await showModalBottomSheet(
               isScrollControlled: true,
               context: context,
               builder: (_) => BlocProvider.value(
@@ -92,6 +92,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: CustomBottomSheet(task: null),
               ),
             );
+            if (result == true) {
+              context.read<GetTaskCubit>().getTask();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<GetTaskCubit>(),
+                    child: HomeScreen(),
+                  ),
+                ),
+              );
+            }
           },
           icon: Icon(Icons.add, color: AppColors.white, size: 35),
         ),

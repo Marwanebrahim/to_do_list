@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
+import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
 import 'package:to_do_list/widgets/custom_bottom_sheet.dart';
@@ -32,13 +35,13 @@ class DisplayTask extends StatelessWidget {
             Text(task.description, style: AppTextStyles.medium16),
             task.image != null
                 ? Center(
-                  child: Image.memory(
+                    child: Image.memory(
                       task.image!,
                       fit: BoxFit.cover,
                       height: 200,
                       width: 200,
                     ),
-                )
+                  )
                 : Spacer(),
             Spacer(),
             Center(
@@ -64,8 +67,8 @@ class DisplayTask extends StatelessWidget {
                 visualDensity: VisualDensity(horizontal: -4),
               ),
         IconButton(
-          onPressed: () {
-            showModalBottomSheet(
+          onPressed: () async {
+            final result = await showModalBottomSheet(
               isScrollControlled: true,
               context: context,
               builder: (_) => BlocProvider.value(
@@ -73,13 +76,25 @@ class DisplayTask extends StatelessWidget {
                 child: CustomBottomSheet(task: task),
               ),
             );
+            if (result == true) {
+              context.read<GetTaskCubit>().getTask();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<GetTaskCubit>(),
+                    child: HomeScreen(),
+                  ),
+                ),
+              );
+            }
           },
           icon: Icon(Icons.mode_edit_outlined),
           visualDensity: VisualDensity(horizontal: -4),
         ),
         IconButton(
-          onPressed: () {
-            showModalBottomSheet(
+          onPressed: () async {
+            final result = await showModalBottomSheet(
               isDismissible: false,
               enableDrag: false,
               context: context,
@@ -89,6 +104,18 @@ class DisplayTask extends StatelessWidget {
                 child: DeleteBottomSheet(task: task),
               ),
             );
+            if (result == true) {
+              context.read<GetTaskCubit>().getTask();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<GetTaskCubit>(),
+                    child: HomeScreen(),
+                  ),
+                ),
+              );
+            }
           },
           icon: Icon(Icons.delete_outline),
           visualDensity: VisualDensity(horizontal: -4),

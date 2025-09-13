@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
-import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/service/task_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
@@ -220,18 +219,10 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                             image: selectedImage,
                           ),
                         );
-
+                  if (!mounted) return;
                   if (isDone) {
                     context.read<GetTaskCubit>().getTask();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BlocProvider.value(
-                          value: context.read<GetTaskCubit>(),
-                          child: HomeScreen(),
-                        ),
-                      ),
-                    );
+                    Navigator.pop(context, true);
                   } else {
                     ScaffoldMessenger.of(
                       context,

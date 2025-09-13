@@ -4,15 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
-import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/service/task_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
 import 'package:to_do_list/widgets/custom_button_widget.dart';
 
-class DeleteBottomSheet extends StatelessWidget {
+class DeleteBottomSheet extends StatefulWidget {
   const DeleteBottomSheet({super.key, required this.task});
   final Task task;
+
+  @override
+  State<DeleteBottomSheet> createState() => _DeleteBottomSheetState();
+}
+
+class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,18 +31,11 @@ class DeleteBottomSheet extends StatelessWidget {
           CustomButtonWidget(
             onTap: () async {
               TaskService taskService = TaskService();
-              bool isDeleted = await taskService.deleteTask(task);
+              bool isDeleted = await taskService.deleteTask(widget.task);
+              if (!mounted) return;
               if (isDeleted) {
                 context.read<GetTaskCubit>().getTask();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider.value(
-                      value: context.read<GetTaskCubit>(),
-                      child: HomeScreen(),
-                    ),
-                  ),
-                );
+                Navigator.pop(context, true);
               } else {
                 ScaffoldMessenger.of(
                   context,
