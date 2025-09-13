@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:to_do_list/models/user.dart';
@@ -84,7 +83,7 @@ class UserService {
       }
       return null;
     } catch (e) {
-      log("$e");
+      
       return null;
     }
   }

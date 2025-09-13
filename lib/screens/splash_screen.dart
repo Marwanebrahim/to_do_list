@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/helper/asset_helper.dart';
 import 'package:to_do_list/screens/home_screen.dart';
 import 'package:to_do_list/screens/sign%20options/sign_in.dart';
@@ -26,12 +28,18 @@ class _SplashScreenState extends State<SplashScreen> {
     await Hive.initFlutter();
     await Hive.openBox("users");
     await Hive.openBox("currentUser");
+    await Hive.openBox("tasks");
     var isUSerFound = await userService.getCurrentUser();
     if (mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => isUSerFound == null ? SignIn() : HomeScreen(),
+          builder: (context) => isUSerFound == null
+              ? SignIn()
+              : BlocProvider(
+                  create: (context) => GetTaskCubit()..getTask(),
+                  child: HomeScreen(),
+                ),
         ),
       );
     }

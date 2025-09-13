@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
+import 'package:to_do_list/widgets/custom_bottom_sheet.dart';
 import 'package:to_do_list/widgets/delete_bottom_sheet.dart';
 
 class DisplayTask extends StatelessWidget {
@@ -26,14 +29,16 @@ class DisplayTask extends StatelessWidget {
                 fontFamily: GoogleFonts.montserrat().fontFamily,
               ),
             ),
-            Text(task.discribtion, style: AppTextStyles.medium16),
+            Text(task.description, style: AppTextStyles.medium16),
             task.image != null
-                ? Image.memory(
-                    task.image!,
-                    fit: BoxFit.cover,
-                    height: 200,
-                    width: 200,
-                  )
+                ? Center(
+                  child: Image.memory(
+                      task.image!,
+                      fit: BoxFit.cover,
+                      height: 200,
+                      width: 200,
+                    ),
+                )
                 : Spacer(),
             Spacer(),
             Center(
@@ -59,7 +64,16 @@ class DisplayTask extends StatelessWidget {
                 visualDensity: VisualDensity(horizontal: -4),
               ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              builder: (_) => BlocProvider.value(
+                value: context.read<GetTaskCubit>(),
+                child: CustomBottomSheet(task: task),
+              ),
+            );
+          },
           icon: Icon(Icons.mode_edit_outlined),
           visualDensity: VisualDensity(horizontal: -4),
         ),
@@ -68,9 +82,12 @@ class DisplayTask extends StatelessWidget {
             showModalBottomSheet(
               isDismissible: false,
               enableDrag: false,
-              backgroundColor: AppColors.transparent,
               context: context,
-              builder: (context) => DeleteBottomSheet(),
+              backgroundColor: AppColors.transparent,
+              builder: (_) => BlocProvider.value(
+                value: context.read<GetTaskCubit>(),
+                child: DeleteBottomSheet(task: task),
+              ),
             );
           },
           icon: Icon(Icons.delete_outline),

@@ -1,14 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_do_list/models/task.dart';
+import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/user.dart';
 import 'package:to_do_list/screens/user_info.dart';
 import 'package:to_do_list/service/user_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
 import 'package:to_do_list/styles/app_text_styles.dart';
-import 'package:to_do_list/widgets/task_list_view.dart';
+import 'package:to_do_list/widgets/custom_bottom_sheet.dart';
+import 'package:to_do_list/widgets/get_tasks_boc_builder.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -72,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             SizedBox(height: 8),
-            Expanded(child: TaskListView(tasks: tasks)),
+            Expanded(child: GetTasksBocBuilder()),
           ],
         ),
       ),
@@ -80,28 +82,20 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: CircleAvatar(
         radius: 30,
         backgroundColor: AppColors.lightRed,
-        child: IconButton(onPressed: () {
-          
-        }, icon: Icon(Icons.add,color: AppColors.white,size: 35,)),
+        child: IconButton(
+          onPressed: () {
+            showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              builder: (_) => BlocProvider.value(
+                value: context.read<GetTaskCubit>(),
+                child: CustomBottomSheet(task: null),
+              ),
+            );
+          },
+          icon: Icon(Icons.add, color: AppColors.white, size: 35),
+        ),
       ),
     );
   }
-
-  List<Task> tasks = [
-    Task(
-      title: "Design api ffffffffffff",
-      discribtion:
-          "Discribtion discribtion discribtion discribtion discribtion discribtion discribtion discribtion discribtion discribtion ",
-      deadLine: null,
-      createdAt: DateTime.now(),
-      image: null,
-    ),
-    Task(
-      title: "Disign ui/ux app",
-      discribtion: "Disign",
-      deadLine: DateTime.now(),
-      createdAt: DateTime.now(),
-      image: null,
-    ),
-  ];
 }

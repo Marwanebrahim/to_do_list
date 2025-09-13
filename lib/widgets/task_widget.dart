@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
 import 'package:to_do_list/screens/display_task.dart';
 import 'package:to_do_list/styles/app_colors.dart';
@@ -17,7 +19,12 @@ class TaskWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DisplayTask(task: task)),
+          MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+              value: context.read<GetTaskCubit>(),
+              child: DisplayTask(task: task),
+            ),
+          ),
         );
       },
       child: Container(
@@ -46,7 +53,7 @@ class TaskWidget extends StatelessWidget {
               ],
             ),
             Text(
-              task.discribtion,
+              task.description,
               style: AppTextStyles.medium16.copyWith(color: AppColors.white),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

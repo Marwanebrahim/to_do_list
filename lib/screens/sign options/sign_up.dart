@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/helper/asset_helper.dart';
 import 'package:to_do_list/models/user.dart';
 import 'package:to_do_list/screens/home_screen.dart';
@@ -125,7 +127,12 @@ class _SignUpState extends State<SignUp> {
                   if (isDone) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                          create: (context) => GetTaskCubit()..getTask(),
+                          child: HomeScreen(),
+                        ),
+                      ),
                     );
                   } else {
                     _showSnackBar(context);
