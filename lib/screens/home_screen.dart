@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           "To Do List",
           style: AppTextStyles.medium20.copyWith(
@@ -94,15 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
             if (result == true) {
               context.read<GetTaskCubit>().getTask();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                    value: context.read<GetTaskCubit>(),
-                    child: HomeScreen(),
-                  ),
-                ),
-              );
+              setState(() {});
             }
           },
           icon: Icon(Icons.add, color: AppColors.white, size: 35),

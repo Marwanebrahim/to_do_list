@@ -1,8 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
 import 'package:to_do_list/service/task_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
@@ -34,7 +32,6 @@ class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
               bool isDeleted = await taskService.deleteTask(widget.task);
               if (!mounted) return;
               if (isDeleted) {
-                context.read<GetTaskCubit>().getTask();
                 Navigator.pop(context, true);
               } else {
                 ScaffoldMessenger.of(

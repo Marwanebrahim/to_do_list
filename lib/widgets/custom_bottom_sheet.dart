@@ -3,9 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:to_do_list/cubit/get_task_cubit.dart';
 import 'package:to_do_list/models/task.dart';
 import 'package:to_do_list/service/task_service.dart';
 import 'package:to_do_list/styles/app_colors.dart';
@@ -32,6 +30,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   void initState() {
     titleController.text = widget.task?.title ?? "";
     descriptionController.text = widget.task?.description ?? "";
+    selectedDate = widget.task?.deadLine;
+    selectedImage = widget.task?.image;
     super.initState();
   }
 
@@ -221,7 +221,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                         );
                   if (!mounted) return;
                   if (isDone) {
-                    context.read<GetTaskCubit>().getTask();
                     Navigator.pop(context, true);
                   } else {
                     ScaffoldMessenger.of(
